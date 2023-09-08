@@ -49,7 +49,7 @@ display_name = Attribute.compute do
   show_full_name.() ?  "#{first_name.()} #{last_name.()}" : first_name.()
 end
 
-Attribute.changed do
+Attribute.observe do
   puts "My name is #{display_name.()}"
 end
 # => My name is John Brown

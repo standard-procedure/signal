@@ -30,8 +30,12 @@ class Attribute
   end
   alias_method :write, :set
 
+  def observe &block
+    Attribute.observe(&block)
+  end
+
   def _update_listeners
-    if batch_in_progress?
+    if update_in_progress?
       updated_attributes.add self
     else
       @listeners.each do |listener|
@@ -43,6 +47,7 @@ class Attribute
   class << self
     TYPES = {
       string: "Attribute::String",
+      integer: "Attribute::Integer",
       boolean: "Attribute::Boolean"
     }.freeze
 
@@ -58,13 +63,11 @@ class Attribute
 
     def compute &block
       Attribute.new(nil).tap do |attribute|
-        changed do
-          attribute.set block.call
-        end
+        observe { attribute.set block.call }
       end
     end
 
-    def changed &block
+    def observe &block
       Listener.new(&block).call
     end
 
