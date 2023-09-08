@@ -18,7 +18,7 @@ Where I live, most people have a first name and a last name (where the last name
 
 So our dependent (maybe it's the user-interface showing a name badge on-screen) needs to know which format to use - either combined names or just first. And, because this is a live system, it needs to update itself if something changes.
 
-If we're showing the combined name, we depend on first_name and last_name. But if we're showing the shorter version, we only depend on the first_name - we don't want the dependency on last_name, because, should the last_name change, it will trigger a UI update even though nothing needs to be redrawn. At best, this is uneccessary CPU usage, at worst, it could result in slow responses and lots of flicker.
+If we're showing the combined name, we depend on first_name and last_name. But if we're showing the shorter version, we only depend on the first_name - we don't want the dependency on last_name, because, should the last_name change, it will trigger a UI update even though nothing needs to be redrawn. At best, this is unnecessary CPU usage, at worst, it could result in slow responses and lots of flicker.
 
 (Of course, this is a trivial example, but you can imagine how if you've got a whole load of complex inter-dependencies which are frequently updated, the cost of redraws quickly becomes an issue)
 
@@ -36,9 +36,9 @@ Which is all very abstract, so let's see it in action.
 
 In the example below, the observer (which is the bit that prints "My name is X") depends on the `display_name` attribute.
 
-`display_name` itself depends on either a combination of first_name`and`last_name`or just`first_name`- depending on the value of`show_full_name` (which itself is another dependency).
+`display_name` itself depends on either a combination of `first_name` and `last_name` or just `first_name` on its own - depending on the value of `show_full_name` (which itself is another dependency).
 
-This means that if `show_full_name` is true, then `display_name` will update if `first_name`, `last_name` or `show_full_name` change. But if `show_full_name` is false, then `display_name` will only update when `first_name` or `show_full_name` changes. So `last_name` does not trigger unecessary updates.
+This means that if `show_full_name` is true, then `display_name` will update if `first_name`, `last_name` or `show_full_name` change. But if `show_full_name` is false, then `display_name` will only update when `first_name` or `show_full_name` changes. So `last_name` does not trigger unnecessary updates.
 
 ```ruby
 first_name = Attribute.string "John"
@@ -52,17 +52,18 @@ end
 Attribute.changed do
   puts "My name is #{display_name.()}"
 end
+# => My name is John Brown
 
 show_full_name.set false
 # => My name is John
 last_name.set "Brown"
-# no output as `show_full_name` does not depend on `last_name` at the moment
+# no output
 show_full_name.set true
 # => My name is John Brown
 
 Attribute.update do
   first_name.set "Dave"
-  # no output when we set `first_name`, only when the batch is completed
+  # no output
   show_full_name.set false
 end
 # => My name is Dave
