@@ -2,7 +2,7 @@
 
 RSpec.describe Attribute do
   it "observes a single attribute" do
-    attribute = Attribute.string "Hello"
+    attribute = Attribute.text "Hello"
 
     result = nil
     attribute.observe do
@@ -15,8 +15,8 @@ RSpec.describe Attribute do
   end
 
   it "observes multiple attributes" do
-    first_name = Attribute.string "Kim"
-    last_name = Attribute.string "West"
+    first_name = Attribute.text "Kim"
+    last_name = Attribute.text "West"
 
     result = nil
     Attribute.observe do
@@ -32,9 +32,9 @@ RSpec.describe Attribute do
   end
 
   it "computes a value from multiple observed attributes" do
-    nickname = Attribute.string "Cocaine"
-    first_name = Attribute.string "Kate"
-    last_name = Attribute.string "Moss"
+    nickname = Attribute.text "Cocaine"
+    first_name = Attribute.text "Kate"
+    last_name = Attribute.text "Moss"
     is_tabloid = Attribute.boolean false
 
     name = Attribute.compute do

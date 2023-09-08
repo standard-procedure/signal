@@ -41,8 +41,8 @@ In the example below, the observer (which is the bit that prints "My name is X")
 This means that if `show_full_name` is true, then `display_name` will update if `first_name`, `last_name` or `show_full_name` change. But if `show_full_name` is false, then `display_name` will only update when `first_name` or `show_full_name` changes. So `last_name` does not trigger unnecessary updates.
 
 ```ruby
-first_name = Attribute.string "John"
-last_name = Attribute.string "Smith"
+first_name = Attribute.text "John"
+last_name = Attribute.text "Smith"
 show_full_name = Attribute.boolean true
 
 display_name = Attribute.compute do

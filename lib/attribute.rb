@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "attribute/version"
-
 class Attribute
+  Dir["#{__dir__}/attribute/*.rb"].sort.each { |file| require file }
+
   def initialize value
-    @value = value
     @listeners = [] # contains Listeners
+    set value
   end
 
   def to_s
@@ -23,9 +23,10 @@ class Attribute
   alias_method :read, :call
 
   def set new_value
-    return @value if new_value == @value
-    @value = new_value
-    _update_listeners
+    if new_value != @value
+      @value = new_value
+      _update_listeners
+    end
     @value
   end
   alias_method :write, :set
@@ -45,19 +46,10 @@ class Attribute
   end
 
   class << self
-    TYPES = {
-      string: "Attribute::String",
-      integer: "Attribute::Integer",
-      boolean: "Attribute::Boolean"
-    }.freeze
-
-    def types
-      TYPES.keys
-    end
-
-    TYPES.each do |type, klass|
+    %i[text integer float date time boolean].each do |type|
+      class_name = "Attribute::#{type.to_s.capitalize}"
       define_method type do |value|
-        Attribute.new value
+        const_get(class_name).new value
       end
     end
 
@@ -120,41 +112,5 @@ class Attribute
 
   def updated_attributes
     Attribute._updated_attributes
-  end
-
-  class Listener
-    def initialize &block
-      @block = block
-      @listeners = Set.new # contains Sets of Listeners
-    end
-
-    def add set_of_listeners
-      @listeners.add set_of_listeners
-    end
-
-    def call
-      start
-      begin
-        @block.call
-      ensure
-        finish
-      end
-    end
-
-    def start
-      @listeners.each do |listener|
-        listener.delete self
-      end
-      @listeners.clear
-      call_stack.push self
-    end
-
-    def finish
-      call_stack.pop
-    end
-
-    def call_stack
-      Attribute._call_stack
-    end
   end
 end
