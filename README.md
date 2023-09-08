@@ -1,4 +1,4 @@
-# Standard::Procedure::Attribute
+# Attribute
 
 Signal-style observable attributes in Ruby
 
