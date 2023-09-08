@@ -8,29 +8,29 @@ In traditional object-oriented programming, we deal with `Observables` (which, i
 
 An observable object allows other objects - listeners, watchers, dependents (whatever you want to call them) - to observe this object and get notified when it changes.
 
-This is great, as it allows us to decouple our objects. If X and Y both need to know when Z changes, the observable pattern allows X and Y to know about Z without Z having to know about X or Y, which reduces interdependence of our code and makes it more flexible.
+This is great, as it allows us to decouple our objects. If X and Y both need to know when Z changes, the observable pattern allows X and Y to know about Z without Z having to know about X or Y. This reduces the coupling between our different objects which makes it more flexible (as well as easier to understand and write tests for).
 
 Things get more complex when we depend on multiple things though.
 
-Imagine (or if you prefer, look at the example below), an application where we are displaying someone's name. Where I live, most people commonly have a first name and a last name (where the last name tends to be their family name). In some circumstances, you will refer to them by just their first name, in others, by their first name and last name combined.
+Imagine an application where we are displaying someone's name.
 
-So our dependent (which, for the sake of the example, may be the user-interface we are displaying to the user) needs to depend on the person's first name and last name - because if either is updated, the UI needs to update too.
+Where I live, most people have a first name and a last name (where the last name is their family name). In some circumstances, you will refer to them by just their first name, in others, by their first name and last name combined.
 
-What about if we're only displaying their first name though?
+So our dependent (maybe it's the user-interface showing a name badge on-screen) needs to know which format to use - either combined names or just first. And, because this is a live system, it needs to update itself if something changes.
 
-If their last name is updated, we don't want to redraw the UI, because, for display purposes, nothing has changed. We're only interested in changes to the first name.
+If we're showing the combined name, we depend on first_name and last_name. But if we're showing the shorter version, we only depend on the first_name - we don't want the dependency on last_name, because, should the last_name change, it will trigger a UI update even though nothing needs to be redrawn. At best, this is uneccessary CPU usage, at worst, it could result in slow responses and lots of flicker.
 
-So our dependencies have changed, depending upon whether we're interested in their full (combined) name, or just their first name.
+(Of course, this is a trivial example, but you can imagine how if you've got a whole load of complex inter-dependencies which are frequently updated, the cost of redraws quickly becomes an issue)
 
-The simple observable pattern doesn't deal with this.
+The simple observable pattern doesn't deal with variation in dependencies in a simple way. Our dependent would have to listen for changes to the `show_full_name` setting and then add or remove itself from the `last_name` as required. Manual overhead that, while not complex, is the sort of thing we'll either forget to do or will add a load of boiler-plate to our code, making it harder to understand.
 
-But a new pattern, that has been around for years, but is being popularised in "reactive" javascript, known as "[signals](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf)" can deal with it.
+But there's a pattern being popularised in "reactive" javascript, known as "[signals](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf)" that we can use to handle this exact scenario.
 
-Instead of just having an observable object that "pushes" updates out to its dependents, we have an hybrid "push-pull" interaction.
+Instead of just having an observable object that "pushes" updates out to its dependents, we have an hybrid "push-pull" interaction between the observer and its dependents.
 
-When an observable changes, it pushes updates out to its dependents. But its dependents then update their dependencies while they are updating themselves, so any unused dependencies are dropped and any new dependencies added in.
+When an observable changes, it pushes updates out to its dependents. So far, so traditional observable. But during the update phase, the observers push themselves back into the observable, so the dependency links are renewed. This means any unused dependencies are dropped and any new dependencies added in - which in turn also means that "dead" objects that are only being kept alive by virtue of having a hanging event-listener, are also swept from memory.
 
-Which is all very abstract. Let's see it in action.
+Which is all very abstract, so let's see it in action.
 
 ### Example
 
