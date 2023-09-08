@@ -36,37 +36,42 @@ Which is all very abstract, so let's see it in action.
 
 In the example below, the observer (which is the bit that prints "My name is X") depends on the `display_name` attribute.
 
-`display_name` itself depends on either a combination of `first_name` and `last_name` or just `first_name` on its own - depending on the value of `show_full_name` (which itself is another dependency).
+`display_name` itself has varying dependencies - if `show_full_name` is false, it depends on `first_name`, but if it is true it depends on both `first_name` and `last_name`.
 
-This means that if `show_full_name` is true, then `display_name` will update if `first_name`, `last_name` or `show_full_name` change. But if `show_full_name` is false, then `display_name` will only update when `first_name` or `show_full_name` changes. So `last_name` does not trigger unnecessary updates.
+Even though we are only observing the `display_name` attribute, the system keeps track of those dependencies and our log message is printed when the relevant attributes are updated. That is, whenever `show_full_name` or `first_name` are updated, we get a redraw. And if `last_name` is updated, we only get a redraw if `show_full_name` is true.
+
+Finally note that, even though we are only observing `display_name`, we get updates for everything it depends upon, for free. No more writing masses of listeners for each and every object in your system, or relying on events "bubbling" up from deeply nested components up to where you need to respond.
 
 ```ruby
-first_name = Attribute.text "John"
-last_name = Attribute.text "Smith"
+first_name = Attribute.text "Alice"
+last_name = Attribute.text "Aardvark"
 show_full_name = Attribute.boolean true
 
 display_name = Attribute.compute do
-  show_full_name.() ?  "#{first_name.()} #{last_name.()}" : first_name.()
+  show_full_name.get ?  "#{first_name.get} #{last_name.get}" : first_name.get
 end
 
-Attribute.observe do
-  puts "My name is #{display_name.()}"
+display_name.observe do
+  puts "My name is #{display_name.get}"
 end
-# => My name is John Brown
+# => My name is Alice Aardvark
 
 show_full_name.set false
-# => My name is John
-last_name.set "Brown"
+# => My name is Alice
+last_name.set "Anteater"
 # no output
 show_full_name.set true
-# => My name is John Brown
+# => My name is Alice Anteater
 
 Attribute.update do
-  first_name.set "Dave"
+  first_name.set "Anthony"
   # no output
   show_full_name.set false
+  # no output
 end
-# => My name is Dave
+# => My name is Anthony
+show_full_name.set true
+# => My name is Anthony Anteater
 ```
 
 ## Installation
