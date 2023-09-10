@@ -20,7 +20,7 @@ module Signal
       @@update_in_progress = false
       begin
         updated_observables.each do |observable|
-          observable._update_observers
+          observable.update_observers
         end
       ensure
         updated_observables.clear
