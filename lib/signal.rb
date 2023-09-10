@@ -52,5 +52,4 @@ module Signal
       Signal::Manager.finish_update
     end
   end
-
 end

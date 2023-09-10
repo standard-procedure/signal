@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require_relative "observable"
 
+require_relative "observable"
 
 module Signal
   class Attribute

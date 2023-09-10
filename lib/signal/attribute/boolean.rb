@@ -6,7 +6,7 @@ module Signal
         super new_value
       end
 
-      FALSEY = [false, 0, '0', :"0", 'f', :f, 'F', :F, 'false', :false, 'FALSE', :FALSE, 'off', :off, 'OFF', :OFF].freeze # rubocop:disable: Line/BooleanSymbol
+      FALSEY = [false, 0, "0", :"0", "f", :f, "F", :F, "false", :false, "FALSE", :FALSE, "off", :off, "OFF", :OFF].freeze # rubocop:disable: Line/BooleanSymbol
     end
   end
 end

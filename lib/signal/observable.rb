@@ -23,8 +23,8 @@ module Signal
       end
       @value
     end
-    alias get call
-    alias read call
+    alias_method :get, :call
+    alias_method :read, :call
 
     # Set the value of this signal and notify any observers
     #
@@ -42,7 +42,7 @@ module Signal
       end
       @value
     end
-    alias write set
+    alias_method :write, :set
 
     # Observe this signal
     #
