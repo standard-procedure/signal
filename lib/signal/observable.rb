@@ -38,7 +38,7 @@ module Signal
     def set(new_value)
       if new_value != @value
         @value = new_value
-        _update_observers
+        update_observers
       end
       @value
     end
@@ -52,7 +52,11 @@ module Signal
       Signal::Manager.observe(&block)
     end
 
-    def _update_observers
+    # Notify all observers that this signal has changed
+    #
+    # If a batch update is in progress, the observers will not be notified immediately,
+    # but rather when the batch is completed.  Otherwise this triggers all observers
+    def update_observers
       if update_in_progress?
         updated_observables.add self
       else
