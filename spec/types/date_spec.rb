@@ -1,17 +1,17 @@
-RSpec.describe Attribute::Date do
+RSpec.describe Signal::Attribute::Date do
   it "keeps exact date values" do
-    attribute = Attribute.date Date.today
+    attribute = Signal::Attribute.date Date.today
     expect(attribute.get).to eq Date.today
   end
 
   it "converts times into dates" do
-    attribute = Attribute.date Time.now
+    attribute = Signal::Attribute.date Time.now
     expect(attribute.get).to eq Date.today
   end
 
   it "parses strings to dates" do
     ["2023-01-01", "12th January 1977"].each do |value|
-      attribute = Attribute.date value
+      attribute = Signal::Attribute.date value
       expect(attribute.get).to eq Date.parse(value)
       expect(attribute.to_s).to eq Date.parse(value).to_s
     end
@@ -19,12 +19,12 @@ RSpec.describe Attribute::Date do
 
   it "raises a FormatError if it cannot perform the conversion" do
     ["Some stuff", 123, false].each do |value|
-      expect { Attribute.date(value) }.to raise_exception(Attribute::FormatError)
+      expect { Signal::Attribute.date(value) }.to raise_exception(Signal::Attribute::FormatError)
     end
   end
 
   it "preserves nils" do
-    attribute = Attribute.date nil
+    attribute = Signal::Attribute.date nil
     expect(attribute.get).to be_nil
   end
 end

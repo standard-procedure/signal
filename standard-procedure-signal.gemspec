@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/attribute"
+require_relative "lib/signal"
 
 Gem::Specification.new do |spec|
-  spec.name = "standard-procedure-attribute"
-  spec.version = Attribute::VERSION
+  spec.name = "standard-procedure-signal"
+  spec.version = Signal::VERSION
   spec.authors = ["Rahoul Baruah"]
   spec.email = ["rahoulb@standardprocedure.app"]
 
