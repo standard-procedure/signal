@@ -1,0 +1,30 @@
+{
+  // These tasks will run in order when initializing your CodeSandbox project.
+  "setupTasks": [
+    {
+      "name": "Installing Dependencies",
+      "command": "bundle install"
+    }
+  ],
+
+  // These tasks can be run from CodeSandbox. Running one will open a log in the app.
+  "tasks": {
+    "bundle": {
+      "name": "Bundle install",
+      "command": "bundle install",
+      "runAtStart": true
+    },
+    "format": { 
+      "name": "Lint and format",
+      "command": "standardrb --fix"
+    }
+    "spec": {
+      "name": "Run Tests",
+      "command": "rake spec"
+    },
+    "ruby:typecheck": {
+      "name": "Typecheck",
+      "command": "solargraph typecheck"
+    }
+  }
+}

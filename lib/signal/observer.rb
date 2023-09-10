@@ -1,12 +1,12 @@
-class Attribute
-  class Listener
+module Signal
+  class Observer
     def initialize &block
       @block = block
-      @listeners = Set.new # contains Sets of Listeners
+      @observers = Set.new # contains Sets of Observers
     end
 
-    def add set_of_listeners
-      @listeners.add set_of_listeners
+    def add set_of_observers
+      @observers.add set_of_observers
     end
 
     def call
@@ -19,10 +19,10 @@ class Attribute
     end
 
     def start
-      @listeners.each do |listener|
-        listener.delete self
+      @observers.each do |observer|
+        observer.delete self
       end
-      @listeners.clear
+      @observers.clear
       call_stack.push self
     end
 
@@ -31,7 +31,7 @@ class Attribute
     end
 
     def call_stack
-      Attribute._call_stack
+      Signal::Manager.call_stack
     end
   end
 end
