@@ -7,7 +7,7 @@ RSpec.describe Signal::Attribute::Boolean do
   end
 
   it "accepts falsey values as false" do
-    [false, 0, "0", :"0", "f", :f, "F", :F, "false", :false, "FALSE", :FALSE, "off", :off, "OFF", :OFF].each do |value| # rubocop:disable: Line/BooleanSymbol
+    [false, 0, "0", :"0", "f", :f, "F", :F, "false", :false, "FALSE", :FALSE, "off", :off, "OFF", :OFF].each do |value| # standard:disable Lint/BooleanSymbol
       attribute = Signal::Attribute.boolean value
       expect(attribute.get).to eq false
     end

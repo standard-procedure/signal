@@ -12,8 +12,6 @@ module Signal
       @@updated_observables ||= Set.new
     end
 
-    private
-
     def self.start_update
       @@update_in_progress = true
     end
