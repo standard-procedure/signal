@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe Signal::Attribute do
-  it "observes a single Signal::Attribute" do
-    attribute = Signal::Attribute.text "Hello"
+RSpec.describe StandardProcedure::Signal::Attribute do
+  it "observes a single StandardProcedure::Signal::Attribute" do
+    attribute = StandardProcedure::Signal::Attribute.text "Hello"
 
     result = nil
-    Signal.observe do
+    StandardProcedure::Signal.observe do
       result = attribute.get
     end
     expect(result).to eq "Hello"
@@ -14,12 +14,12 @@ RSpec.describe Signal::Attribute do
     expect(result).to eq "Goodbye"
   end
 
-  it "observes multiple Signal::Attributes" do
-    first_name = Signal::Attribute.text "Kim"
-    last_name = Signal::Attribute.text "West"
+  it "observes multiple StandardProcedure::Signal::Attributes" do
+    first_name = StandardProcedure::Signal::Attribute.text "Kim"
+    last_name = StandardProcedure::Signal::Attribute.text "West"
 
     result = nil
-    Signal.observe do
+    StandardProcedure::Signal.observe do
       result = "#{first_name.get} #{last_name.get}"
     end
     expect(result).to eq "Kim West"
@@ -31,18 +31,18 @@ RSpec.describe Signal::Attribute do
     expect(result).to eq "Kourtney Kardashian"
   end
 
-  it "computes a value from multiple observed Signal::Attributes" do
-    nickname = Signal::Attribute.text "Cocaine"
-    first_name = Signal::Attribute.text "Kate"
-    last_name = Signal::Attribute.text "Moss"
-    is_tabloid = Signal::Attribute.boolean false
+  it "computes a value from multiple observed StandardProcedure::Signal::Attributes" do
+    nickname = StandardProcedure::Signal::Attribute.text "Cocaine"
+    first_name = StandardProcedure::Signal::Attribute.text "Kate"
+    last_name = StandardProcedure::Signal::Attribute.text "Moss"
+    is_tabloid = StandardProcedure::Signal::Attribute.boolean false
 
-    name = Signal.compute do
+    name = StandardProcedure::Signal.compute do
       is_tabloid.get ? "#{nickname.get} #{first_name.get}" : "#{first_name.get} #{last_name.get}"
     end
 
     result = nil
-    Signal.observe do
+    StandardProcedure::Signal.observe do
       result = name.get
     end
     expect(result).to eq "Kate Moss"
@@ -52,11 +52,11 @@ RSpec.describe Signal::Attribute do
   end
 
   it "batches updates" do
-    attribute = Signal::Attribute.integer 0
+    attribute = StandardProcedure::Signal::Attribute.integer 0
     result = nil
-    Signal.observe { result = attribute.get }
+    StandardProcedure::Signal.observe { result = attribute.get }
     expect(result).to eq 0
-    Signal.update do
+    StandardProcedure::Signal.update do
       attribute.set 1
       expect(result).to eq 0
       attribute.set 2

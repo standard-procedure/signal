@@ -1,44 +1,44 @@
-RSpec.describe Signal::Attribute::Array do
+RSpec.describe StandardProcedure::Signal::Attribute::Array do
   it "is enumerable" do
-    attribute = Signal::Attribute.array [1, 2]
+    attribute = StandardProcedure::Signal::Attribute.array [1, 2]
     expect(attribute).to be_kind_of Enumerable
   end
 
   it "wraps its contents in attributes" do
     array = ["String", 123, 45.6, Date.today, Time.now, true]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     array.each_with_index do |value, index|
       item = attribute.get[index]
-      expect(item).to be_kind_of Signal::Attribute
+      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
       expect(item.get).to eq value
     end
   end
 
   it "does not wrap existing attributes" do
-    array = [Signal::Attribute.new("String"), Signal::Attribute.new(123)]
+    array = [StandardProcedure::Signal::Attribute.new("String"), StandardProcedure::Signal::Attribute.new(123)]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     array.each_with_index do |value, index|
       item = attribute.get[index]
-      expect(item).to be_kind_of Signal::Attribute
+      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
       expect(item).to eq value
     end
   end
 
   it "wraps non-arrays in an array" do
-    attribute = Signal::Attribute.array 123
+    attribute = StandardProcedure::Signal::Attribute.array 123
     expect(attribute.count).to eq 1
-    expect(attribute.first).to be_kind_of Signal::Attribute
+    expect(attribute.first).to be_kind_of StandardProcedure::Signal::Attribute
     expect(attribute.first.get).to eq 123
   end
 
   it "pushes items onto the end of the array" do
     array = ["String", 123, 45.6, Date.today, Time.now, true]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     count = array.count
     attribute.observe do
@@ -59,7 +59,7 @@ RSpec.describe Signal::Attribute::Array do
   it "pops items from the end of the array" do
     array = ["String", 123, 45.6]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     count = array.count
     attribute.observe do
@@ -76,7 +76,7 @@ RSpec.describe Signal::Attribute::Array do
   it "adds items to the start of the array" do
     array = ["String", 123, 45.6, Date.today, Time.now, true]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     count = array.count
     attribute.observe do
@@ -92,7 +92,7 @@ RSpec.describe Signal::Attribute::Array do
   it "shifts items from the start of the array" do
     array = ["String", 123, 45.6]
 
-    attribute = Signal::Attribute.array array
+    attribute = StandardProcedure::Signal::Attribute.array array
 
     count = array.count
     attribute.observe do
@@ -107,7 +107,7 @@ RSpec.describe Signal::Attribute::Array do
   end
 
   it "preserves nils" do
-    attribute = Signal::Attribute.array nil
+    attribute = StandardProcedure::Signal::Attribute.array nil
     expect(attribute.get).to be_nil
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "signal"
+require "standard_procedure/signal"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

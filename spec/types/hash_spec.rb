@@ -1,27 +1,27 @@
-RSpec.describe Signal::Attribute::Hash do
+RSpec.describe StandardProcedure::Signal::Attribute::Hash do
   it "is enumerable" do
-    attribute = Signal::Attribute.hash key: "value"
+    attribute = StandardProcedure::Signal::Attribute.hash key: "value"
     expect(attribute).to be_kind_of Enumerable
   end
 
   it "wraps its contents in attributes" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     data.each do |key, value|
       item = attribute.get[key]
-      expect(item).to be_kind_of Signal::Attribute
+      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
       expect(item.get).to eq value
     end
   end
 
   it "does not accept non-hashes" do
-    expect { Signal::Attribute.hash 123 }.to raise_exception(ArgumentError)
+    expect { StandardProcedure::Signal::Attribute.hash 123 }.to raise_exception(ArgumentError)
   end
 
   it "does not wrap existing attributes" do
-    data = {key1: Signal::Attribute.new("value1"), key2: Signal::Attribute.new(999)}
-    attribute = Signal::Attribute.hash data
+    data = {key1: StandardProcedure::Signal::Attribute.new("value1"), key2: StandardProcedure::Signal::Attribute.new(999)}
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     data.each do |key, value|
       item = attribute.get[key]
@@ -31,14 +31,14 @@ RSpec.describe Signal::Attribute::Hash do
 
   it "knows its keys" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     expect(attribute.keys).to eq data.keys
   end
 
   it "knows its values" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     expect(attribute.values.map(&:get)).to eq data.values
   end
@@ -46,29 +46,29 @@ RSpec.describe Signal::Attribute::Hash do
   it "knows if it contains any data" do
     data = {key1: "value1", key2: 999}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.any?).to eq true
 
     data = {}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.any?).to eq false
   end
 
   it "knows if it is empty" do
     data = {key1: "value1", key2: 999}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.empty?).to eq false
 
     data = {}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.empty?).to eq true
   end
 
   it "knows if it includes a particular key" do
     data = {key1: "value1", key2: 999}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.include?(:key1)).to eq true
     expect(attribute.include?(:not_a_key)).to eq false
   end
@@ -76,19 +76,19 @@ RSpec.describe Signal::Attribute::Hash do
   it "knows if it has a particular key" do
     data = {key1: "value1", key2: 999}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.has_key?(:key1)).to eq true
     expect(attribute.has_key?(:not_a_key)).to eq false
   end
 
   it "knows if it has a particular attribute" do
-    value1 = Signal::Attribute.new("value1")
-    value2 = Signal::Attribute.new(999)
-    value3 = Signal::Attribute.new(123)
+    value1 = StandardProcedure::Signal::Attribute.new("value1")
+    value2 = StandardProcedure::Signal::Attribute.new(999)
+    value3 = StandardProcedure::Signal::Attribute.new(123)
 
     data = {key1: value1, key2: value2}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.has_value?(value1, attribute: true)).to eq true
     expect(attribute.has_value?("value1", attribute: true)).to eq false
     expect(attribute.has_value?(value2, attribute: true)).to eq true
@@ -98,13 +98,13 @@ RSpec.describe Signal::Attribute::Hash do
   end
 
   it "knows if it has a particular value" do
-    value1 = Signal::Attribute.new("value1")
-    value2 = Signal::Attribute.new(999)
-    value3 = Signal::Attribute.new(123)
+    value1 = StandardProcedure::Signal::Attribute.new("value1")
+    value2 = StandardProcedure::Signal::Attribute.new(999)
+    value3 = StandardProcedure::Signal::Attribute.new(123)
 
     data = {key1: value1, key2: value2}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.has_value?(value1, attribute: false)).to eq false
     expect(attribute.has_value?("value1", attribute: false)).to eq true
     expect(attribute.has_value?(value2, attribute: false)).to eq false
@@ -116,14 +116,14 @@ RSpec.describe Signal::Attribute::Hash do
   it "knows its size" do
     data = {key1: "value1", key2: 999}
 
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
     expect(attribute.size).to eq 2
     expect(attribute.length).to eq 2
   end
 
   it "retrieves a key" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     expect(attribute[:key1].get).to eq "value1"
     expect(attribute.fetch(:key2).get).to eq 999
@@ -131,7 +131,7 @@ RSpec.describe Signal::Attribute::Hash do
 
   it "sets a key" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     size = data.size
     attribute.observe do
@@ -151,7 +151,7 @@ RSpec.describe Signal::Attribute::Hash do
 
   it "deletes a key" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     size = data.size
     attribute.observe do
@@ -166,7 +166,7 @@ RSpec.describe Signal::Attribute::Hash do
 
   it "clears all keys and values" do
     data = {key1: "value1", key2: 999}
-    attribute = Signal::Attribute.hash data
+    attribute = StandardProcedure::Signal::Attribute.hash data
 
     size = data.size
     attribute.observe do
@@ -181,7 +181,7 @@ RSpec.describe Signal::Attribute::Hash do
   end
 
   it "preserves nils" do
-    attribute = Signal::Attribute.array nil
+    attribute = StandardProcedure::Signal::Attribute.array nil
     expect(attribute.get).to be_nil
   end
 end
