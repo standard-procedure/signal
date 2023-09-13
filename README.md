@@ -15,18 +15,20 @@ Finally, we define an observer (our "name badge") that simply writes the display
 When we update the values stored in those various attributes, our "name badge" redraws itself when it has to but does nothing if it does not need to change.
 
 ```ruby
+include StandardProcedure::Signal
+
 # Define the basic attributes
-first_name = StandardProcedure::Signal::Attribute.text "Alice"
-last_name = StandardProcedure::Signal::Attribute.text "Aardvark"
-show_full_name = StandardProcedure::Signal::Attribute.boolean true
+first_name = attribute.text "Alice"
+last_name = attribute.text "Aardvark"
+show_full_name = attribute.boolean true
 
 # Define the composite attribute
-display_name = StandardProcedure::Signal.compute do
+display_name = compute do
   show_full_name.get ?  "#{first_name.get} #{last_name.get}" : first_name.get
 end
 
 # Define the output that the end-user will see
-display_name.observe do
+observe do
   puts "My name is #{display_name.get}"
 end
 # => My name is Alice Aardvark
@@ -39,7 +41,7 @@ show_full_name.set true
 # => My name is Alice Anteater
 
 # Perform a batch update, with no notifications until the batch is completed
-StandardProcedure::Signal.update do
+update do
   first_name.set "Anthony"
   # no output
   show_full_name.set false
@@ -98,26 +100,32 @@ Finally, note that all this effectively comes for free, with no additional compl
 
 ## Usage
 
-All this is handled for you by the interaction between the [Signal](lib/standard_procedure/signal.rb) and [Signal::Observable](lib/standard_procedure/signal/observable.rb) modules and the [StandardProcedure::Signal::Observer](lib/standard_procedure/signal/observer.rb) class. You never deal with StandardProcedure::Signal::Observers directly, as the StandardProcedure::Signal module will build one when you call `StandardProcedure::Signal.observe`.
+All this is handled for you by the interaction between the [StandardProcedure::Signal](lib/standard_procedure/signal.rb) and [StandardProcedure::Signal::Observable](lib/standard_procedure/signal/observable.rb) modules and the [StandardProcedure::Signal::Observer](lib/standard_procedure/signal/observer.rb) class. You never deal with StandardProcedure::Signal::Observers directly, as the StandardProcedure::Signal module will build one when you call `StandardProcedure::Signal.observe`.
 
-In addition, there is a concrete implementation of the StandardProcedure::Signal::Observable module that you can use directly. A [StandardProcedure::Signal::Attribute](lib/standard_procedure/signal/attribute.rb) is an observable that stores any arbitrary object and notifies its observers when it is updated. There are also subclasses of StandardProcedure::Signal::Attribute that automatically perform type-conversions for you (`text, integer, float, date, time, boolean`).
+In addition, there is a concrete implementation of the StandardProcedure::Signal::Observable module that you can use directly. A [StandardProcedure::Signal::Attribute](lib/standard_procedure/signal/attribute.rb) is an observable that stores any arbitrary object and notifies its observers when it is updated. There are also subclasses of attribute that automatically perform type-conversions for you (`text, integer, float, date, time, boolean`).
 
 And `StandardProcedure::Signal.compute` allows you to build composite observables which depend on multiple other observables.
 
 ```ruby
-@my_object = StandardProcedure::Signal::Attribute.new MyObject.new
-@my_text = StandardProcedure::Signal::Attribute.text "The total is: "
-@a = StandardProcedure::Signal::Attribute.integer 1
-@b = StandardProcedure::Signal::Attribute.integer 2
-@sum = StandardProcedure::Signal.compute { @a.get + @b.get }
-StandardProcedure::Signal.observe do
+include StandardProcedure::Signal
+
+@my_object = attribute.new MyObject.new
+@my_text = attribute.text "The total is: "
+@a = attribute.integer 1
+@b = attribute.integer 2
+@sum = compute { @a.get + @b.get }
+observe do
   puts "#{@my_text.get} #{@sum.get}"
 end
 ```
 
-To access the values stored in a `StandardProcedure::Signal::Attribute`, you can call `StandardProcedure::Signal::Attribute#get`. This is aliased as both `StandardProcedure::Signal::Attribute#read` and `StandardProcedure::Signal::Attribute#call` (which means you can use the short-hand `@my_attribute.()` as well).
+To access the values stored in a `attribute`, you can call `attribute#get`. This is aliased as both `attribute#read` and `attribute#call` (which means you can use the short-hand `@my_attribute.()` as well).
 
-To place a value into an attribute you call `StandardProcedure::Signal::Attribute#set`, aliased as `StandardProcedure::Signal::Attribute#write`.
+To place a value into an attribute you call `attribute#set`, aliased as `attribute#write`.
+
+### Extensions
+
+Because `StandardProcedure::Signal.observe` and `StandardProcedure::Signal::Attribute` are quite long names, you can just include the [StandardProcedure::Signal module](lib/standard_procedure/signal.rb) that you can include into your classes, to give you shortcuts.  
 
 ### Triggering updates
 
@@ -126,50 +134,56 @@ It's important to note that most observables only trigger updates when the `set`
 For example: 
 
 ```ruby
+include StandardProcedure::Signal
+
 # This will not trigger any updates
-@attribute = StandardProcedure::Signal::Attribute.string "hello"
+@attribute = attribute.string "hello"
 @attribute.get.upcase!
 
 # This will trigger updates
-@attribute = StandardProcedure::Signal::Attribute.string "hello"
+@attribute = attribute.string "hello"
 @attribute.set @attribute.get.upcase
 ```
 
 If necessary, you can manually trigger updates on an observable.  
 ```ruby
+include StandardProcedure::Signal
+
 # Manually trigger updates
-@attribute = StandardProcedure::Signal::Attribute.string "hello"
+@attribute = attribute.string "hello"
 @attribute.get.upcase!
 @attribute.update_observers 
 ```
 
-However, there are two mutable attributes that you can use - [StandardProcedure::Signal::Attribute::Array](/lib/standard_procedure/signal/attribute/array.rb) and [StandardProcedure::Signal::Attribute::Hash](/lib/standard_procedure/signal/attribute/hash.rb).  
+However, there are two mutable attributes that you can use - [attribute::Array](/lib/standard_procedure/signal/attribute/array.rb) and [attribute::Hash](/lib/standard_procedure/signal/attribute/hash.rb).  
 
 These are partial implementations of the ruby Array and Hash classes that are convenience wrappers when it comes to updates.  They implement Enumerable, so you can use `each`, `map` and your other favourites, plus they include a subset of the mutation methods to make it easier to manipulate the contents without repeatedly copying, changing and then setting your attributes contents.  
 
 ```ruby
+include StandardProcedure::Signal
+
 # Non-mutable array attribute 
 @array = [1, 2, 3]
-@attribute = StandardProcedure::Signal::Attribute.new @array 
+@attribute = attribute.new @array 
 @new_array = @array.dup 
 @new_array.push 4
 @attribute.set @new_array
 
 # Mutable array attribute
 @array = [1, 2, 3]
-@attribute = StandardProcedure::Signal::Attribute.array @array 
+@attribute = attribute.array @array 
 @attribute << 4
 
 # Non-mutable hash attribute 
 @hash = { key1: "value1", key2: "value2" }
-@attribute = StandardProcedure::Signal::Attribute.new @hash 
+@attribute = attribute.new @hash 
 @new_hash = @hash.dup 
 @new_hash[:key3] = "value3"
 @attribute.set @new_hash
 
 # Mutable hash attribute
 @hash = { key1: "value1", key2: "value2" }
-@attribute = StandardProcedure::Signal::Attribute.array @hash
+@attribute = attribute.array @hash
 @attribute[:key3] = "value3"
 ```
 

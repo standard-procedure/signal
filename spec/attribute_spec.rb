@@ -1,25 +1,26 @@
 # frozen_string_literal: true
 
 RSpec.describe StandardProcedure::Signal::Attribute do
+  include StandardProcedure::Signal
   it "observes a single StandardProcedure::Signal::Attribute" do
-    attribute = StandardProcedure::Signal::Attribute.text "Hello"
+    a = attribute.text "Hello"
 
     result = nil
-    StandardProcedure::Signal.observe do
-      result = attribute.get
+    observe do
+      result = a.get
     end
     expect(result).to eq "Hello"
 
-    attribute.set "Goodbye"
+    a.set "Goodbye"
     expect(result).to eq "Goodbye"
   end
 
   it "observes multiple StandardProcedure::Signal::Attributes" do
-    first_name = StandardProcedure::Signal::Attribute.text "Kim"
-    last_name = StandardProcedure::Signal::Attribute.text "West"
+    first_name = attribute.text "Kim"
+    last_name = attribute.text "West"
 
     result = nil
-    StandardProcedure::Signal.observe do
+    observe do
       result = "#{first_name.get} #{last_name.get}"
     end
     expect(result).to eq "Kim West"
@@ -32,17 +33,17 @@ RSpec.describe StandardProcedure::Signal::Attribute do
   end
 
   it "computes a value from multiple observed StandardProcedure::Signal::Attributes" do
-    nickname = StandardProcedure::Signal::Attribute.text "Cocaine"
-    first_name = StandardProcedure::Signal::Attribute.text "Kate"
-    last_name = StandardProcedure::Signal::Attribute.text "Moss"
-    is_tabloid = StandardProcedure::Signal::Attribute.boolean false
+    nickname = attribute.text "Cocaine"
+    first_name = attribute.text "Kate"
+    last_name = attribute.text "Moss"
+    is_tabloid = attribute.boolean false
 
-    name = StandardProcedure::Signal.compute do
+    name = compute do
       is_tabloid.get ? "#{nickname.get} #{first_name.get}" : "#{first_name.get} #{last_name.get}"
     end
 
     result = nil
-    StandardProcedure::Signal.observe do
+    observe do
       result = name.get
     end
     expect(result).to eq "Kate Moss"
@@ -52,16 +53,16 @@ RSpec.describe StandardProcedure::Signal::Attribute do
   end
 
   it "batches updates" do
-    attribute = StandardProcedure::Signal::Attribute.integer 0
+    a = attribute.integer 0
     result = nil
-    StandardProcedure::Signal.observe { result = attribute.get }
+    observe { result = a.get }
     expect(result).to eq 0
-    StandardProcedure::Signal.update do
-      attribute.set 1
+    update do
+      a.set 1
       expect(result).to eq 0
-      attribute.set 2
+      a.set 2
       expect(result).to eq 0
-      attribute.set 3
+      a.set 3
       expect(result).to eq 0
     end
     expect(result).to eq 3

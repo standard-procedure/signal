@@ -1,6 +1,8 @@
 module StandardProcedure
   module Signal
     module Observable
+      include Signal
+
       # Get this value converted to a string
       # @return [String]
       def to_s
@@ -44,14 +46,6 @@ module StandardProcedure
         @value
       end
       alias_method :write, :set
-
-      # Observe this signal
-      #
-      # The block will be called whenever this signal or its dependents is updated.
-      # The block handler does not require any parameters, simply access the signal, or any other signals and act accordingly.  If you access any dependents outside of this signal, they will be tracked and you will be notified again when they update.
-      def observe(&block)
-        Signal.observe(&block)
-      end
 
       # Notify all observers that this signal has changed
       #
