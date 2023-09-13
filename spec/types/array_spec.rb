@@ -16,13 +16,6 @@ RSpec.describe Signal::Attribute::Array do
     end
   end
 
-  it "wraps non-arrays in an array" do
-    attribute = Signal::Attribute.array 123
-    expect(attribute.count).to eq 1
-    expect(attribute.first).to be_kind_of Signal::Attribute
-    expect(attribute.first.get).to eq 123
-  end
-
   it "does not wrap existing attributes" do
     array = [Signal::Attribute.new("String"), Signal::Attribute.new(123)]
 
@@ -31,8 +24,15 @@ RSpec.describe Signal::Attribute::Array do
     array.each_with_index do |value, index|
       item = attribute.get[index]
       expect(item).to be_kind_of Signal::Attribute
-      expect(item.get).to eq value.get
+      expect(item).to eq value
     end
+  end
+
+  it "wraps non-arrays in an array" do
+    attribute = Signal::Attribute.array 123
+    expect(attribute.count).to eq 1
+    expect(attribute.first).to be_kind_of Signal::Attribute
+    expect(attribute.first.get).to eq 123
   end
 
   it "pushes items onto the end of the array" do

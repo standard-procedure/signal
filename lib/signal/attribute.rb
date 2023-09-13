@@ -15,14 +15,14 @@ module Signal
     end
 
     class << self
-      %i[text integer float date time boolean array].each do |type|
+      %i[text integer float date time boolean array hash].each do |type|
         class_name = "Signal::Attribute::#{type.to_s.capitalize}"
         define_method type do |value|
           const_get(class_name).new value
         end
       end
 
-      def for item 
+      def for item
         item.is_a?(Signal::Observable) ? item : Attribute.new(item)
       end
     end
