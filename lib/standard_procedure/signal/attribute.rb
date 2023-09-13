@@ -5,7 +5,15 @@ module StandardProcedure
   module Signal
     class Attribute
       include Observable
-      Dir["#{__dir__}/attribute/*.rb"].sort.each { |file| require file }
+      require_relative "attribute/format_error"
+      require_relative "attribute/array"
+      require_relative "attribute/boolean"
+      require_relative "attribute/date"
+      require_relative "attribute/float"
+      require_relative "attribute/hash"
+      require_relative "attribute/integer"
+      require_relative "attribute/text"
+      require_relative "attribute/time"
 
       # Create a new, untyped, Attribute, with the given value
       # Alternatively, you can use the class factory methods to build an attribute that automatically performs type conversions.
