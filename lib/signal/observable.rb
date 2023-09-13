@@ -49,7 +49,7 @@ module Signal
     # The block will be called whenever this signal or its dependents is updated.
     # The block handler does not require any parameters, simply access the signal, or any other signals and act accordingly.  If you access any dependents outside of this signal, they will be tracked and you will be notified again when they update.
     def observe(&block)
-      Signal::Manager.observe(&block)
+      Signal.observe(&block)
     end
 
     # Notify all observers that this signal has changed
