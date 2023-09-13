@@ -121,48 +121,56 @@ To place a value into an attribute you call `Signal::Attribute#set`, aliased as 
 
 ### Triggering updates
 
-It's important to note that observables only trigger updates when the `set` method is called with a new value. This has an important implication when it comes to manipulating or mutating values.
+It's important to note that most observables only trigger updates when the `set` method is called with a new value. This means that, in most cases, you cannot _mutate_ a value stored in an observable.  Instead, you should replace the value by calling `set`.  
 
-For example, if you put a ruby hash into an attribute, the updates will not be triggered if you add or remove keys and values in that hash.
+For example: 
 
 ```ruby
-@attribute = Signal::Attribute.new { key_1: "value_1", key_2: "value_2" }
+# This will not trigger any updates
+@attribute = Signal::Attribute.string "hello"
+@attribute.get.upcase!
 
-# These calls will *not* trigger any updates
-@attribute.get[:key_3] = "value_3"
-@attribute.get[:key_1] = "some other value"
-@attribute.get.transform_values! { |v| v.capitalize }
+# This will trigger updates
+@attribute = Signal::Attribute.string "hello"
+@attribute.set @attribute.get.upcase
 ```
 
-Instead, you need to manually trigger an update or, better yet, treat the attribute's contents as immutable and replace them.
-
-Option One: manually triggering updates
-
+If necessary, you can manually trigger updates on an observable.  
 ```ruby
-@attribute = Signal::Attribute.new { key_1: "value_1", key_2: "value_2" }
-
-@attribute.get[:key_3] = "value_3"
-@attribute.update_observers
-@attribute.get[:key_1] = "some other value"
-@attribute.update_observers
-@attribute.get.transform_values! { |v| v.capitalize }
-@attribute.update_observers
+# Manually trigger updates
+@attribute = Signal::Attribute.string "hello"
+@attribute.get.upcase!
+@attribute.update_observers 
 ```
 
-Option Two: treat the data as immutable, copy it then make changes, finally setting the attribute with the new data
+However, there are two mutable attributes that you can use - [Signal::Attribute::Array](/lib/signal/attribute/array.rb) and [Signal::Attribute::Hash](/lib/signal/attribute/hash.rb).  
+
+These are partial implementations of the ruby Array and Hash classes that are convenience wrappers when it comes to updates.  They implement Enumerable, so you can use `each`, `map` and your other favourites, plus they include a subset of the mutation methods to make it easier to manipulate the contents without repeatedly copying, changing and then setting your attributes contents.  
 
 ```ruby
-@attribute = Signal::Attribute.new { key_1: "value_1", key_2: "value_2" }
+# Non-mutable array attribute 
+@array = [1, 2, 3]
+@attribute = Signal::Attribute.new @array 
+@new_array = @array.dup 
+@new_array.push 4
+@attribute.set @new_array
 
-data = @attribute.get.dup
-data[:key_3] = "value_3"
-@attribute.set data
+# Mutable array attribute
+@array = [1, 2, 3]
+@attribute = Signal::Attribute.array @array 
+@attribute << 4
 
-data = @attribute.get.dup
-data[:key_1] = "some other value"
-@attribute.set data
+# Non-mutable hash attribute 
+@hash = { key1: "value1", key2: "value2" }
+@attribute = Signal::Attribute.new @hash 
+@new_hash = @hash.dup 
+@new_hash[:key3] = "value3"
+@attribute.set @new_hash
 
-@attribute.set(@attribute.get.transform_values { |v| v.capitalize })
+# Mutable hash attribute
+@hash = { key1: "value1", key2: "value2" }
+@attribute = Signal::Attribute.array @hash
+@attribute[:key3] = "value3"
 ```
 
 ## Installation
