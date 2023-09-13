@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    standard-procedure-signal (0.1.1)
+    standard-procedure-signal (0.1.2)
 
 GEM
   remote: https://rubygems.org/

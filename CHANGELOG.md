@@ -1,3 +1,7 @@
+## [0.1.2] - 2023-09-13
+
+- Added the StandardProcedure namespace, as ::Signal is used by Ruby itself
+
 ## [0.1.1] - 2023-09-13
 
 - Added in [Signal::Attribute::Array](/lib/signal/attribute/array.rb) and [Signal::Attribute::Hash](/lib/signal/attribute/hash.rb)
