@@ -1,3 +1,7 @@
+## [0.2.0] - 2023-09-14
+
+- Improved the API by extending the ruby Signal module
+
 ## [0.1.2] - 2023-09-13
 
 - Added the StandardProcedure namespace, as ::Signal is used by Ruby itself
