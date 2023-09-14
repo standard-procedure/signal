@@ -1,3 +1,7 @@
+## [0.3.0] - 2023-09-14
+
+- Added opal-rspec to ensure that everything works OK when running in a browser context
+
 ## [0.2.0] - 2023-09-14
 
 - Improved the API by extending the ruby Signal module

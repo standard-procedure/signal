@@ -1,4 +1,4 @@
-if defined?(Signal) && Signal.is_a?(Class)
+if RUBY_ENGINE == "opal"
   class Signal
     extend StandardProcedure::Signal
   end

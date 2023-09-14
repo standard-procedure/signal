@@ -191,6 +191,15 @@ Then
 
     require "standard_procedure/signal"
 
+## Tests
+
+The gem uses rspec for testing. 
+
+`bundle exec rake spec` will run the specs in the traditional ruby environment.  
+
+`bundle exec rake opal_spec` will run the specs in Opal.
+This starts a web-server, listening on port 3000.  To view the test results, navigate to http://localhost:3000/ 
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/standard-procedure/standard-procedure-signal. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/standard-procedure/standard-procedure-signal/blob/main/CODE_OF_CONDUCT.md).
