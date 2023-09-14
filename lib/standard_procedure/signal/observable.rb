@@ -31,6 +31,13 @@ module StandardProcedure
       alias_method :get, :call
       alias_method :read, :call
 
+      # Peek at the value of this signal without registering as an observer
+      #
+      # This is useful if you just want to access the value but don't care if it changes
+      def peek
+        @value
+      end
+
       # Set the value of this signal and notify any observers
       #
       # This method is aliased as `write` it can be used in whichever way makes most sense to you
