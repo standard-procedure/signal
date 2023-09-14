@@ -7,6 +7,7 @@ module StandardProcedure
     require_relative "signal/observer"
     require_relative "signal/observable"
     require_relative "signal/attribute"
+    require_relative "signal/signal_extensions"
 
     # Build a "computed" attribute that automatically updates based upon its dependents
     #
@@ -21,8 +22,8 @@ module StandardProcedure
     #   "#{first_line.get}\n#{second_line.get}\n#{city.get}\n#{region.get}"
     # end
     def compute(&block)
-      StandardProcedure::Signal::Attribute.new(nil).tap do |attribute|
-        observe { attribute.set block.call }
+      attribute(nil).tap do |a|
+        observe { a.set block.call }
       end
     end
 
@@ -59,16 +60,29 @@ module StandardProcedure
       end
     end
 
-    # Build an attribute that signals its changes to dependents
-    # See StandardProcedure::Signal::Attribute for the different types available
+    # Shortcut method to build an attribute that signals its changes to dependents
+    #
+    # There are also helpers for the various types of Attribute - see StandardProcedure::Signal::Attribute::TYPES
     #
     # include StandardProcedure::Signal
-    # @name = attribute.text "Alice"
-    # @age = attribute.integer 23
-    # @colours = attribute.array %w[red green blue]
-    # @object = attribute.new @some_object
-    def attribute
-      StandardProcedure::Signal::Attribute
+    # @object = attribute @some_object
+    # @name = text_attribute "Alice"
+    # @age = integer_attribute 23
+    # @colours = array_attribute %w[red green blue]
+    def attribute value
+      StandardProcedure::Signal::Attribute.new value
+    end
+
+    class_eval do
+      StandardProcedure::Signal::Attribute::TYPES.each do |type|
+        define_method :"#{type}_attribute" do |value|
+          StandardProcedure::Signal::Attribute.send type, value
+        end
+      end
     end
   end
+end
+
+def Signal
+  StandardProcedure::Signal
 end

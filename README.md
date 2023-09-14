@@ -15,20 +15,18 @@ Finally, we define an observer (our "name badge") that simply writes the display
 When we update the values stored in those various attributes, our "name badge" redraws itself when it has to but does nothing if it does not need to change.
 
 ```ruby
-include StandardProcedure::Signal
-
 # Define the basic attributes
-first_name = attribute.text "Alice"
-last_name = attribute.text "Aardvark"
-show_full_name = attribute.boolean true
+first_name = Signal.text_attribute "Alice"
+last_name = Signal.text_attribute "Aardvark"
+show_full_name = Signal.boolean_attribute true
 
 # Define the composite attribute
-display_name = compute do
+display_name = Signal.compute do
   show_full_name.get ?  "#{first_name.get} #{last_name.get}" : first_name.get
 end
 
 # Define the output that the end-user will see
-observe do
+Signal.observe do
   puts "My name is #{display_name.get}"
 end
 # => My name is Alice Aardvark
@@ -41,7 +39,7 @@ show_full_name.set true
 # => My name is Alice Anteater
 
 # Perform a batch update, with no notifications until the batch is completed
-update do
+Signal.update do
   first_name.set "Anthony"
   # no output
   show_full_name.set false
@@ -107,25 +105,23 @@ In addition, there is a concrete implementation of the StandardProcedure::Signal
 And `StandardProcedure::Signal.compute` allows you to build composite observables which depend on multiple other observables.
 
 ```ruby
-include StandardProcedure::Signal
-
-@my_object = attribute.new MyObject.new
-@my_text = attribute.text "The total is: "
-@a = attribute.integer 1
-@b = attribute.integer 2
-@sum = compute { @a.get + @b.get }
-observe do
+@my_object = Signal.attribute MyObject.new
+@my_text = Signal.text_attribute "The total is: "
+@a = Signal.integer_attribute 1
+@b = Signal.integer_attribute 2
+@sum = Signal.compute { @a.get + @b.get }
+Signal.observe do
   puts "#{@my_text.get} #{@sum.get}"
 end
 ```
 
-To access the values stored in a `attribute`, you can call `attribute#get`. This is aliased as both `attribute#read` and `attribute#call` (which means you can use the short-hand `@my_attribute.()` as well).
+To access the values stored in an attribute, you can call `StandardProcedure::Signal::Attribute#get`. This is aliased as both `StandardProcedure::Signal::Attribute#read` and `StandardProcedure::Signal::Attribute#call` (which means you can use the short-hand `@my_attribute.()` as well).  However, calling `StandardProcedure::Signal::Attribute#get` also incurs the overhead of setting up observers for the attribute, so if you just want to peek at the value without worrying about changes, you can call `StandardProcedure::Signal::Attribute#peek`.
 
-To place a value into an attribute you call `attribute#set`, aliased as `attribute#write`.
+To place a value into an attribute you call `StandardProcedure::Signal::Attribute#set`, aliased as `StandardProcedure::Signal::Attribute#write`.
 
 ### Extensions
 
-Because `StandardProcedure::Signal.observe` and `StandardProcedure::Signal::Attribute` are quite long names, you can just include the [StandardProcedure::Signal module](lib/standard_procedure/signal.rb) that you can include into your classes, to give you shortcuts.  
+Because `StandardProcedure::Signal.observe` and `StandardProcedure::Signal::Attribute` are quite long names, you can include the [StandardProcedure::Signal module](lib/standard_procedure/signal.rb) into your own classes.  And the module has also been extended into the standard Ruby [Signal](https://docs.ruby-lang.org/en/master/Module.html) so you can refer to them as `Signal.observe`, `Signal.compute` and so on.  
 
 ### Triggering updates
 
@@ -134,23 +130,19 @@ It's important to note that most observables only trigger updates when the `set`
 For example: 
 
 ```ruby
-include StandardProcedure::Signal
-
 # This will not trigger any updates
-@attribute = attribute.string "hello"
+@attribute = Signal.text_attribute "hello"
 @attribute.get.upcase!
 
 # This will trigger updates
-@attribute = attribute.string "hello"
+@attribute = Signal.text_attribute "hello"
 @attribute.set @attribute.get.upcase
 ```
 
 If necessary, you can manually trigger updates on an observable.  
 ```ruby
-include StandardProcedure::Signal
-
 # Manually trigger updates
-@attribute = attribute.string "hello"
+@attribute = Signal.text_attribute "hello"
 @attribute.get.upcase!
 @attribute.update_observers 
 ```
@@ -160,30 +152,28 @@ However, there are two mutable attributes that you can use - [attribute::Array](
 These are partial implementations of the ruby Array and Hash classes that are convenience wrappers when it comes to updates.  They implement Enumerable, so you can use `each`, `map` and your other favourites, plus they include a subset of the mutation methods to make it easier to manipulate the contents without repeatedly copying, changing and then setting your attributes contents.  
 
 ```ruby
-include StandardProcedure::Signal
-
 # Non-mutable array attribute 
 @array = [1, 2, 3]
-@attribute = attribute.new @array 
+@attribute = Signal.array_attribute @array 
 @new_array = @array.dup 
 @new_array.push 4
 @attribute.set @new_array
 
 # Mutable array attribute
 @array = [1, 2, 3]
-@attribute = attribute.array @array 
+@attribute = Signal.array_attribute @array 
 @attribute << 4
 
 # Non-mutable hash attribute 
 @hash = { key1: "value1", key2: "value2" }
-@attribute = attribute.new @hash 
+@attribute = Signal.attribute @hash 
 @new_hash = @hash.dup 
 @new_hash[:key3] = "value3"
 @attribute.set @new_hash
 
 # Mutable hash attribute
 @hash = { key1: "value1", key2: "value2" }
-@attribute = attribute.array @hash
+@attribute = Signal.array_attribute @hash
 @attribute[:key3] = "value3"
 ```
 

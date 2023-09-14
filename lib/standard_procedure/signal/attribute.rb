@@ -22,8 +22,9 @@ module StandardProcedure
         set value
       end
 
+      TYPES = %i[text integer float date time boolean array hash].freeze
       class << self
-        %i[text integer float date time boolean array hash].each do |type|
+        TYPES.each do |type|
           class_name = "StandardProcedure::Signal::Attribute::#{type.to_s.capitalize}"
           define_method type do |value|
             const_get(class_name).new value

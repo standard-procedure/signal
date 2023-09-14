@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe StandardProcedure::Signal::Attribute do
-  include StandardProcedure::Signal
   it "observes a single StandardProcedure::Signal::Attribute" do
-    a = attribute.text "Hello"
+    a = Signal.text_attribute "Hello"
 
     result = nil
-    observe do
+    Signal.observe do
       result = a.get
     end
     expect(result).to eq "Hello"
@@ -16,11 +15,11 @@ RSpec.describe StandardProcedure::Signal::Attribute do
   end
 
   it "observes multiple StandardProcedure::Signal::Attributes" do
-    first_name = attribute.text "Kim"
-    last_name = attribute.text "West"
+    first_name = Signal.text_attribute "Kim"
+    last_name = Signal.text_attribute "West"
 
     result = nil
-    observe do
+    Signal.observe do
       result = "#{first_name.get} #{last_name.get}"
     end
     expect(result).to eq "Kim West"
@@ -33,17 +32,17 @@ RSpec.describe StandardProcedure::Signal::Attribute do
   end
 
   it "computes a value from multiple observed StandardProcedure::Signal::Attributes" do
-    nickname = attribute.text "Cocaine"
-    first_name = attribute.text "Kate"
-    last_name = attribute.text "Moss"
-    is_tabloid = attribute.boolean false
+    nickname = Signal.text_attribute "Cocaine"
+    first_name = Signal.text_attribute "Kate"
+    last_name = Signal.text_attribute "Moss"
+    is_tabloid = Signal.boolean_attribute false
 
-    name = compute do
+    name = Signal.compute do
       is_tabloid.get ? "#{nickname.get} #{first_name.get}" : "#{first_name.get} #{last_name.get}"
     end
 
     result = nil
-    observe do
+    Signal.observe do
       result = name.get
     end
     expect(result).to eq "Kate Moss"
@@ -53,11 +52,11 @@ RSpec.describe StandardProcedure::Signal::Attribute do
   end
 
   it "batches updates" do
-    a = attribute.integer 0
+    a = Signal.integer_attribute 0
     result = nil
-    observe { result = a.get }
+    Signal.observe { result = a.get }
     expect(result).to eq 0
-    update do
+    Signal.update do
       a.set 1
       expect(result).to eq 0
       a.set 2
