@@ -7,10 +7,10 @@ module StandardProcedure
         def set(new_value)
           new_value = if new_value.nil?
             nil
-          elsif new_value.respond_to? :map
-            new_value.map { |i| Attribute.for i }
+          elsif new_value.is_a? Enumerable
+            new_value.dup
           else
-            [Attribute.new(new_value)]
+            [new_value]
           end
           super new_value
         end
@@ -35,7 +35,7 @@ module StandardProcedure
         end
 
         def unshift item
-          @value.unshift Attribute.for(item)
+          @value.unshift item
           update_observers
           self
         end

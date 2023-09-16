@@ -4,35 +4,10 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
     expect(attribute).to be_kind_of Enumerable
   end
 
-  it "wraps its contents in attributes" do
-    array = ["String", 123, 45.6, Date.today, Time.now, true]
-
-    attribute = StandardProcedure::Signal::Attribute.array array
-
-    array.each_with_index do |value, index|
-      item = attribute.get[index]
-      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
-      expect(item.get).to eq value
-    end
-  end
-
-  it "does not wrap existing attributes" do
-    array = [StandardProcedure::Signal::Attribute.new("String"), StandardProcedure::Signal::Attribute.new(123)]
-
-    attribute = StandardProcedure::Signal::Attribute.array array
-
-    array.each_with_index do |value, index|
-      item = attribute.get[index]
-      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
-      expect(item).to eq value
-    end
-  end
-
   it "wraps non-arrays in an array" do
     attribute = StandardProcedure::Signal::Attribute.array 123
     expect(attribute.count).to eq 1
-    expect(attribute.first).to be_kind_of StandardProcedure::Signal::Attribute
-    expect(attribute.first.get).to eq 123
+    expect(attribute.first).to eq 123
   end
 
   it "pushes items onto the end of the array" do
@@ -68,9 +43,9 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     popped_item = attribute.pop
 
-    expect(popped_item.get).to eq 45.6
+    expect(popped_item).to eq 45.6
     expect(count).to eq(array.count - 1)
-    expect(attribute.last.get).to eq 123
+    expect(attribute.last).to eq 123
   end
 
   it "adds items to the start of the array" do
@@ -86,7 +61,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
     attribute.unshift "new_item"
 
     expect(count).to eq(array.count + 1)
-    expect(attribute.first.get).to eq "new_item"
+    expect(attribute.first).to eq "new_item"
   end
 
   it "shifts items from the start of the array" do
@@ -101,9 +76,9 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     shifted_item = attribute.shift
 
-    expect(shifted_item.get).to eq "String"
+    expect(shifted_item).to eq "String"
     expect(count).to eq(array.count - 1)
-    expect(attribute.first.get).to eq 123
+    expect(attribute.first).to eq 123
   end
 
   it "preserves nils" do

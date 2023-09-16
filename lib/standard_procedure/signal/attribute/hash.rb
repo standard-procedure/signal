@@ -4,11 +4,11 @@ module StandardProcedure
       class Hash < Attribute
         include Enumerable
 
-        def set(new_value)
+        def set new_value
           new_value = if new_value.nil?
             nil
-          elsif new_value.respond_to? :transform_values
-            new_value.transform_values { |value| Attribute.for value }
+          elsif new_value.respond_to? :to_hash
+            new_value.to_hash.dup
           else
             raise ArgumentError.new "#{new_value.inspect} is not recognised as a Hash"
           end
@@ -31,12 +31,8 @@ module StandardProcedure
           @value.has_key? key
         end
 
-        def has_value? value, attribute: false
-          if attribute
-            @value.has_value? value
-          else
-            @value.values.map(&:get).include? value
-          end
+        def has_value? value
+          @value.has_value? value
         end
 
         def values
@@ -82,6 +78,10 @@ module StandardProcedure
         def clear
           @value.clear
           update_observers
+        end
+
+        def to_hash
+          @value
         end
       end
     end

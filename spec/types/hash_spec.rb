@@ -4,29 +4,8 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
     expect(attribute).to be_kind_of Enumerable
   end
 
-  it "wraps its contents in attributes" do
-    data = {key1: "value1", key2: 999}
-    attribute = StandardProcedure::Signal::Attribute.hash data
-
-    data.each do |key, value|
-      item = attribute.get[key]
-      expect(item).to be_kind_of StandardProcedure::Signal::Attribute
-      expect(item.get).to eq value
-    end
-  end
-
   it "does not accept non-hashes" do
     expect { StandardProcedure::Signal::Attribute.hash 123 }.to raise_exception(ArgumentError)
-  end
-
-  it "does not wrap existing attributes" do
-    data = {key1: StandardProcedure::Signal::Attribute.new("value1"), key2: StandardProcedure::Signal::Attribute.new(999)}
-    attribute = StandardProcedure::Signal::Attribute.hash data
-
-    data.each do |key, value|
-      item = attribute.get[key]
-      expect(item).to eq value
-    end
   end
 
   it "knows its keys" do
@@ -40,7 +19,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
     data = {key1: "value1", key2: 999}
     attribute = StandardProcedure::Signal::Attribute.hash data
 
-    expect(attribute.values.map(&:get)).to eq data.values
+    expect(attribute.values).to eq data.values
   end
 
   it "knows if it contains any data" do
@@ -81,36 +60,13 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
     expect(attribute.has_key?(:not_a_key)).to eq false
   end
 
-  it "knows if it has a particular attribute" do
-    value1 = StandardProcedure::Signal::Attribute.new("value1")
-    value2 = StandardProcedure::Signal::Attribute.new(999)
-    value3 = StandardProcedure::Signal::Attribute.new(123)
-
-    data = {key1: value1, key2: value2}
-
-    attribute = StandardProcedure::Signal::Attribute.hash data
-    expect(attribute.has_value?(value1, attribute: true)).to eq true
-    expect(attribute.has_value?("value1", attribute: true)).to eq false
-    expect(attribute.has_value?(value2, attribute: true)).to eq true
-    expect(attribute.has_value?(999, attribute: true)).to eq false
-    expect(attribute.has_value?(value3, attribute: true)).to eq false
-    expect(attribute.has_value?(123, attribute: true)).to eq false
-  end
-
   it "knows if it has a particular value" do
-    value1 = StandardProcedure::Signal::Attribute.new("value1")
-    value2 = StandardProcedure::Signal::Attribute.new(999)
-    value3 = StandardProcedure::Signal::Attribute.new(123)
-
-    data = {key1: value1, key2: value2}
+    data = {key1: "value1", key2: 999}
 
     attribute = StandardProcedure::Signal::Attribute.hash data
-    expect(attribute.has_value?(value1, attribute: false)).to eq false
-    expect(attribute.has_value?("value1", attribute: false)).to eq true
-    expect(attribute.has_value?(value2, attribute: false)).to eq false
-    expect(attribute.has_value?(999, attribute: false)).to eq true
-    expect(attribute.has_value?(value3, attribute: false)).to eq false
-    expect(attribute.has_value?(123, attribute: false)).to eq false
+    expect(attribute.has_value?("value1")).to eq true
+    expect(attribute.has_value?(999)).to eq true
+    expect(attribute.has_value?("value3")).to eq false
   end
 
   it "knows its size" do
@@ -125,8 +81,8 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
     data = {key1: "value1", key2: 999}
     attribute = StandardProcedure::Signal::Attribute.hash data
 
-    expect(attribute[:key1].get).to eq "value1"
-    expect(attribute.fetch(:key2).get).to eq 999
+    expect(attribute[:key1]).to eq "value1"
+    expect(attribute.fetch(:key2)).to eq 999
   end
 
   it "sets a key" do
