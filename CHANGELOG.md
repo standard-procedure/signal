@@ -1,3 +1,7 @@
+## [0.3.1] - 2023-09-16
+
+- Array and Hash no longer wrap their contents in attributes.  
+
 ## [0.3.0] - 2023-09-14
 
 - Added opal-rspec to ensure that everything works OK when running in a browser context

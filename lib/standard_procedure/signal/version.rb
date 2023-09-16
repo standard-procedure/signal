@@ -2,6 +2,6 @@
 
 module StandardProcedure
   module Signal
-    VERSION = "0.3.0"
+    VERSION = "0.3.1"
   end
 end
