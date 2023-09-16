@@ -9,8 +9,7 @@ module StandardProcedure
           when nil then nil
           when ::Time then new_value
           when ::Date then new_value.to_time
-          when String then ::Time.new(new_value)
-          else raise "#{new_value} not recognised"
+          else ::Time.new(new_value)
           end
           super new_value
         rescue => e
