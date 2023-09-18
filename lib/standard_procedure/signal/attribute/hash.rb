@@ -16,72 +16,72 @@ module StandardProcedure
         end
 
         def each &block
-          @value.each(&block)
+          get.each(&block)
         end
 
         def keys
-          @value.keys
+          get.keys
         end
 
         def include? key
-          @value.include? key
+          get.include? key
         end
 
         def has_key? key
-          @value.has_key? key
+          get.has_key? key
         end
 
         def has_value? value
-          @value.has_value? value
+          get.has_value? value
         end
 
         def values
-          @value.values
+          get.values
         end
 
         def size
-          @value.size
+          get.size
         end
         alias_method :length, :size
 
         def any?
-          @value.any?
+          get.any?
         end
 
         def empty?
-          @value.empty?
+          get.empty?
         end
 
         def [] key
-          @value[key]
+          get[key]
         end
 
         def fetch key
-          @value.fetch key
+          get.fetch key
         end
 
         def []= key, value
-          @value[key] = value
+          get[key] = value
           update_observers
         end
 
         def store key, value
-          @value.store key, value
+          get.store key, value
           update_observers
         end
 
         def delete key
-          @value.delete key
+          get.delete key
           update_observers
         end
 
         def clear
-          @value.clear
+          get.clear
           update_observers
         end
 
         def to_hash
-          @value
+          get
         end
       end
     end

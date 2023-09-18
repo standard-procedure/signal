@@ -91,7 +91,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
 
     size = data.size
     attribute.observe do
-      size = attribute.get.size
+      size = attribute.size
     end
 
     attribute[:key3] = "something"
@@ -111,7 +111,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
 
     size = data.size
     attribute.observe do
-      size = attribute.get.size
+      size = attribute.size
     end
 
     attribute.delete :key1
@@ -126,7 +126,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Hash do
 
     size = data.size
     attribute.observe do
-      size = attribute.get.size
+      size = attribute.size
     end
 
     attribute.clear

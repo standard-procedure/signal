@@ -1,3 +1,7 @@
+## [0.3.2] - 2023-09-18
+
+- Bugfix: Specs were not picking up that Array and Hash did not trigger updates correctly
+
 ## [0.3.1] - 2023-09-16
 
 - Array and Hash no longer wrap their contents in attributes.  

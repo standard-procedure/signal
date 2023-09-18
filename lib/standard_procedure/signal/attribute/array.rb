@@ -16,36 +16,36 @@ module StandardProcedure
         end
 
         def push item
-          @value.push item
+          get.push item
           update_observers
           self
         end
         alias_method :<<, :push
 
         def pop
-          item = @value.pop
+          item = get.pop
           update_observers
           item
         end
 
         def shift
-          item = @value.shift
+          item = get.shift
           update_observers
           item
         end
 
         def unshift item
-          @value.unshift item
+          get.unshift item
           update_observers
           self
         end
 
         def last
-          @value.last
+          get.last
         end
 
         def each &block
-          @value.each(&block)
+          get.each(&block)
         end
       end
     end

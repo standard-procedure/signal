@@ -17,7 +17,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     count = array.count
     attribute.observe do
-      count = attribute.get.count
+      count = attribute.count
     end
 
     attribute.push "new_item"
@@ -38,7 +38,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     count = array.count
     attribute.observe do
-      count = attribute.get.count
+      count = attribute.count
     end
 
     popped_item = attribute.pop
@@ -55,7 +55,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     count = array.count
     attribute.observe do
-      count = attribute.get.count
+      count = attribute.count
     end
 
     attribute.unshift "new_item"
@@ -71,7 +71,7 @@ RSpec.describe StandardProcedure::Signal::Attribute::Array do
 
     count = array.count
     attribute.observe do
-      count = attribute.get.count
+      count = attribute.count
     end
 
     shifted_item = attribute.shift
